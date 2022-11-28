@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -35,6 +35,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "rest_framework",
+    "rest_framework.authtoken",
+    "crispy_forms",
+    "crispy_bootstrap5",
+    "django_rq",
+    'tgbot',
+    'zetter',
 ]
 
 MIDDLEWARE = [
@@ -67,6 +74,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'tgbot.wsgi.application'
 
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
@@ -79,6 +89,26 @@ DATABASES = {
         "HOST": "localhost",
         "PORT": 5432,
     }
+}
+
+# https://www.django-rest-framework.org/tutorial/quickstart/
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+    "PAGE_SIZE": 10,
+}
+
+# Redis server
+RQ_QUEUES = {
+    "default": {
+        "HOST": os.getenv("REDIS_HOST", "localhost"),
+        "PORT": 6379,
+        "DB": 0,
+        "DEFAULT_TIMEOUT": 360,
+    },
 }
 
 # Password validation
@@ -113,9 +143,44 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATICFILES_FINDERS = [
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+]
+
+STATICFILES_DIRS = [BASE_DIR / "static"]
+# STATIC_ROOT = [BASE_DIR.parent.parent / "static"]
+STATIC_URL = "/static/"
+
+MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = "/media/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
+    },
+    "scrapy.core.scraper": {
+        "handlers": [],
+        "level": "ERROR",
+    },
+    "django.db.backends": {
+        "handlers": ["console"],
+        "level": "ERROR",
+    },
+}
+
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
