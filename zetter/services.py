@@ -2,7 +2,7 @@ import os
 
 import aiohttp
 import aioredis
-
+import logging
 from telegram import Update, Bot
 from telegram.ext import ContextTypes
 
@@ -11,6 +11,7 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 
 redis = aioredis.from_url(f"redis://{REDIS_HOST}")
+logger = logging.getLogger(__name__)
 
 
 async def get_chat_ids():
@@ -24,8 +25,9 @@ async def get_chat_ids():
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await redis.lpush("chats", update.effective_chat.id)
-    chat_ids = await get_chat_ids()
-    await update.message.reply_text(", ".join(set(chat_ids)))
+    logger.info(await get_chat_ids())
+    await update.message.reply_text("Welcome, I can show you some information about auctions and adverts\nPress /info "
+                                    "and take a list of commands")
 
 
 async def info(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
