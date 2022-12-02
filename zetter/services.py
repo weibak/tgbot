@@ -74,7 +74,7 @@ async def get_bmw_adverts(url: str, update: Update, context: ContextTypes.DEFAUL
             cars = await response.json()
     result = ""
     for car in cars["results"]:
-        result += f"Car: {car['car_id__mark']}\nEngine: {car['engine_type']}\nCapacity: {car['engine_capacity']}\n"\
+        result += f"Car: {car['car_id']}\nEngine: {car['engine_type']}\nCapacity: {car['engine_capacity']}\n"\
                   f"Drive: {car['drive']}\nGear box: {car['gear_box']}\nDescription: {car['description']}\n"\
                   f"Image: {car['image']}\nWin: {car['win']}\nPrice: {car['price']}\nPrice USD: {car['price_usd']}\n"\
                   f"Phone number: {car['phone_number']}\n\n"
