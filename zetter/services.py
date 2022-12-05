@@ -64,6 +64,22 @@ async def adverts_toyo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     await get_cars_adverts("http://127.0.0.1:8000/api/adverts/?mark=TOYOTA", update, context)
 
 
+async def adverts_before_3000(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await get_cars_adverts("http://127.0.0.1:8000/api/adverts/?max_price=3000", update, context)
+
+
+async def adverts_3000_6000(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await get_cars_adverts("http://127.0.0.1:8000/api/adverts/?min_price=3000&max_price=6000", update, context)
+
+
+async def adverts_6000_9000(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await get_cars_adverts("http://127.0.0.1:8000/api/adverts/?min_price=6000&max_price=9000", update, context)
+
+
+async def adverts_up_9000(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await get_cars_adverts("http://127.0.0.1:8000/api/adverts/?min_price=9000", update, context)
+
+
 async def get_cars_adverts(url: str, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
