@@ -3,7 +3,7 @@ import os
 
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters
 
-from services import start, info, all_news, message, all_auctions, all_adverts, adverts_bmw
+from services import start, info, all_news, message, all_auctions, all_adverts, adverts_bmw, adverts_merc, adverts_toyo
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +18,8 @@ if __name__ == "__main__":
     app.add_handler(CommandHandler("news", all_news))
     app.add_handler(CommandHandler("all_auctions", all_auctions))
     app.add_handler(CommandHandler("bmw_adverts", adverts_bmw))
+    app.add_handler(CommandHandler("merc_adverts", adverts_merc))
+    app.add_handler(CommandHandler("toyo_adverts", adverts_toyo))
     app.add_handler(CommandHandler("all_adverts", all_adverts))
     app.add_handler(MessageHandler(~filters.COMMAND, message))
     app.run_polling()

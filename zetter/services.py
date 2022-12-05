@@ -53,7 +53,15 @@ async def all_news(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def adverts_bmw(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await get_bmw_adverts("http://127.0.0.1:8000/api/adverts/bmw", update, context)
+    await get_cars_adverts("http://127.0.0.1:8000/api/adverts/?mark=BMW", update, context)
+
+
+async def adverts_merc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await get_cars_adverts("http://127.0.0.1:8000/api/adverts/?mark=MERCEDES", update, context)
+
+
+async def adverts_toyo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await get_cars_adverts("http://127.0.0.1:8000/api/adverts/?mark=TOYOTA", update, context)
 
 
 async def get_cars_adverts(url: str, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -63,19 +71,6 @@ async def get_cars_adverts(url: str, update: Update, context: ContextTypes.DEFAU
     result = ""
     for car in cars["results"]:
         result += f"Car: {car['car']}\nEngine: {car['engine_type']}\nCapacity: {car['engine_capacity']}\n"\
-                  f"Drive: {car['drive']}\nGear box: {car['gear_box']}\nDescription: {car['description']}\n"\
-                  f"Image: {car['image']}\nWin: {car['win']}\nPrice: {car['price']}\nPrice USD: {car['price_usd']}\n"\
-                  f"Phone number: {car['phone_number']}\n\n"
-    await update.message.reply_text(result)
-
-
-async def get_bmw_adverts(url: str, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as response:
-            cars = await response.json()
-    result = ""
-    for car in cars["results"]:
-        result += f"Car: {car['car_id']}\nEngine: {car['engine_type']}\nCapacity: {car['engine_capacity']}\n"\
                   f"Drive: {car['drive']}\nGear box: {car['gear_box']}\nDescription: {car['description']}\n"\
                   f"Image: {car['image']}\nWin: {car['win']}\nPrice: {car['price']}\nPrice USD: {car['price_usd']}\n"\
                   f"Phone number: {car['phone_number']}\n\n"
