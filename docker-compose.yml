@@ -5,7 +5,7 @@ services:
     image: redis:latest
 
   server: &base_container
-    image: weibak/zetter:latest
+    image: weibak/tgbot:latest
     ports:
       - "5000:5000"
     volumes:
@@ -19,4 +19,4 @@ services:
     <<: *base_container
     ports: []
     command: |
-      python bot.py
+      python zetter_bot.py

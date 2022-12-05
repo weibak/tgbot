@@ -11,6 +11,7 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 
 redis = aioredis.from_url(f"redis://{REDIS_HOST}")
+logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -40,15 +41,15 @@ async def message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def all_auctions(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await get_cars_auctions("http://127.0.0.1:8000/api/auctions/?ordering=-created_at", update, context)
+    await get_cars_auctions("http://127.0.0.1:8000/api/auctions/", update, context)
 
 
 async def all_adverts(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await get_cars_adverts("http://127.0.0.1:8000/api/adverts/?ordering=-created_at", update, context)
+    await get_cars_adverts("http://127.0.0.1:8000/api/adverts/", update, context)
 
 
 async def all_news(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await get_news("http://127.0.0.1:8000/api/news/?ordering=created_at", update, context)
+    await get_news("http://127.0.0.1:8000/api/news/", update, context)
 
 
 async def adverts_bmw(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -61,7 +62,7 @@ async def get_cars_adverts(url: str, update: Update, context: ContextTypes.DEFAU
             cars = await response.json()
     result = ""
     for car in cars["results"]:
-        result += f"Car: {car['car_id']}\nEngine: {car['engine_type']}\nCapacity: {car['engine_capacity']}\n"\
+        result += f"Car: {car['car']}\nEngine: {car['engine_type']}\nCapacity: {car['engine_capacity']}\n"\
                   f"Drive: {car['drive']}\nGear box: {car['gear_box']}\nDescription: {car['description']}\n"\
                   f"Image: {car['image']}\nWin: {car['win']}\nPrice: {car['price']}\nPrice USD: {car['price_usd']}\n"\
                   f"Phone number: {car['phone_number']}\n\n"
@@ -99,7 +100,7 @@ async def get_news(url: str, update: Update, context: ContextTypes.DEFAULT_TYPE)
             news = await response.json()
     result = ""
     for new in news["results"]:
-        result += f" {new['title']}\n{new['image']}\n{new['text']}\n{new['created_at']}\n"
+        result += f"{new['title']}\n{new['image']}\n{new['text']}\n{new['created_at']}\n"
     await update.message.reply_text(result)
 
 
@@ -110,3 +111,13 @@ async def send_message(text: str, chat_id: int = None) -> None:
         return
     for chat_id in await get_chat_ids():
         await bot.send_message(chat_id=chat_id, text=text)
+
+
+async def redis_subscriber(ws):
+    async with redis.pubsub() as channel:
+        await channel.subscribe("messages")
+        async for response in channel.listen():
+            if isinstance(response.get("data"), bytes):
+                await ws.send_str(response.get('data').decode())
+            else:
+                await ws.send_str(f"Pubsub channel: {response.get('data')}")
