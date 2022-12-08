@@ -86,12 +86,21 @@ async def get_cars_adverts(url: str, update: Update, context: ContextTypes.DEFAU
             cars = await response.json()
     result = ""
     for car in cars["results"]:
-        result += f"Car: {car['car']}\nEngine: {car['engine_type']}\nCapacity: {car['engine_capacity']}\n"\
+        result += f"Mark: {car['car_']['car_model']['mark']['car_mark']}\n" \
+                  f"Model: {car['car_']['car_model']['car_model']}\n"\
+                  f"Year: {car['car_']['year']}\n"\
+                  f"Engine: {car['engine_type']}\nCapacity: {car['engine_capacity']}\n"\
                   f"Drive: {car['drive']}\nGear box: {car['gear_box']}\nDescription: {car['description']}\n"\
                   f"Image: {car['image']}\nWin: {car['win']}\nPrice: {car['price']}\nPrice USD: {car['price_usd']}\n"\
                   f"Phone number: {car['phone_number']}\n\n"
     await update.message.reply_text(result)
 
+"""
+    def get_key(q, value):
+        for k, v in q:
+            if v == value:
+                return k
+"""
 
 async def get_cars_auctions(url: str, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     async with aiohttp.ClientSession() as session:
