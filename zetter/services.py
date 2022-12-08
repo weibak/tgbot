@@ -95,12 +95,6 @@ async def get_cars_adverts(url: str, update: Update, context: ContextTypes.DEFAU
                   f"Phone number: {car['phone_number']}\n\n"
     await update.message.reply_text(result)
 
-"""
-    def get_key(q, value):
-        for k, v in q:
-            if v == value:
-                return k
-"""
 
 async def get_cars_auctions(url: str, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     async with aiohttp.ClientSession() as session:
